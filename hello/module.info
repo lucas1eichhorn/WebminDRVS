@@ -1,0 +1,4 @@
+desc=Test
+desc_en=Test
+os_support=*-linux
+category=system
