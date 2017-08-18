@@ -1,42 +1,71 @@
 #!/usr/bin/perl
 # index.cgi
 # Muestra el menu de la pantalla inicial con iconos
-
 require './hello-lib.pl';
-&ui_print_header(undef, 'DRVS Administration', '', undef, 1, 1, 0,
-	&help_search_link('ifconfig hosts resolve.conf nsswitch.conf', 'man'));
+&ui_print_header(undef, 'DRVS Administration');
+=pod
+require './hello-lib.pl';
+&ui_print_header(undef, 'DRVS Administration');
 
-	print "<div class='row icons-row vertical-align' style='padding-left:170px;'>";
-	
-##DRVS
-print "<div class='col-xs-1 icons-container forged-xx-skip grayscaled animated' style='min-height:150px; min-width:150px;'> ";
-print "<a href='node_info.cgi' class='icon_link' style='text-decoration: none;'>";
-print "<img class='ui_icon ui_icon_protected' src='images/drvs.gif' alt='' style='min-height:100px; min-width:100px;'><br>DRVS</a>";
-print "</div>";
+print &ui_form_start("", "post");
+print &ui_hidden("page", $in{'page'});
+print &ui_table_start("Login",
+		      "width=40% class='loginform'", 2);
 
+# Login message
 
-	
-##NODES
-print "<div class='col-xs-1 icons-container forged-xx-skip grayscaled animated' style='min-height:150px; min-width:150px;'> ";
-print "<a href='list_nodes.cgi' class='icon_link' style='text-decoration: none;'>";
-print "<img class='ui_icon ui_icon_protected' src='images/nodes.gif' alt='' style='min-height:100px; min-width:100px;'><br>Nodes</a>";
-print "</div>";
+print &ui_table_row(undef,"Enter your access credentials", 2, [ "align=center width=20%", "align=center" ]);
 
-##VMs
-print "<div class='col-xs-1 icons-container forged-xx-skip grayscaled animated' style='min-height:150px; min-width:150px;'> ";
-print "<a href='vm_info.cgi?idVM=0' class='icon_link' style='text-decoration: none;'>";
-print "<img class='ui_icon ui_icon_protected' src='images/vm.png' alt='' style='min-height:100px; min-width:100px;'><br>Virtual Machines</a>";
-print "</div>";
+# Username and password
+print &ui_table_row("Hostname",
+	&ui_textbox("hostname", $in{'failed'}, 20, 0, undef, $tags));
+print &ui_table_row("Username",
+	&ui_textbox("user", $in{'failed'}, 20, 0, undef, $tags));
+print &ui_table_row("Password",
+	&ui_password("pass", undef, 20, 0, undef, $tags));
 
 
-#Proxies
-print "<div class='col-xs-1 icons-container forged-xx-skip grayscaled animated' style='min-height:150px; min-width:150px;'> ";
-print "<a href='list_ifcs.cgi' class='icon_link' style='text-decoration: none;'>";
-print "<img class='ui_icon ui_icon_protected' src='images/proxy.png' alt='' style='min-height:100px; min-width:100px;'><br>Proxies</a>";
-print "</div>";
+
+print &ui_table_end(),"\n";
+
+print "<button class='btn btn-info ui_submit ui_form_end_submit' type='button'>&nbsp;<span data-entry='session_login'>Login&nbsp;</span></button>";
+print "<button class='btn btn-info ui_reset' style='padding-left: 28px; vertical-align:middle' type='reset'>Clear</button>";
+print &ui_form_end();
 
 
-print "</div>";
 
-&ui_print_footer('/', $text{'index'});
+&ui_print_footer();
+=cut
 
+print "'<div id='createFolderDialog' class='modal show'>";
+print &ui_form_start("save_host.cgi","post");
+    print "<div class='modal-dialog'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+             
+                <h4 class='text-center'>Host login</h4>
+            </div>
+            <div class='modal-body'>
+					
+					<div class='input-group form-group'>
+						<span class='input-group-addon'><i class='fa fa-fw fa-desktop'></i></span>
+						<input class='form-control session_login' name='host' autocomplete='off' placeholder='Hostname' autofocus='' type='text'>
+					</div>
+					<div class='input-group form-group'>
+						<span class='input-group-addon'><i class='fa fa-fw fa-user'></i></span>
+						<input class='form-control session_login' name='user' autocomplete='off' placeholder='Username' autofocus='' type='text'>
+					</div>
+                   
+					<div class='input-group form-group'>
+						<span class='input-group-addon'><i class='fa fa-fw fa-lock'></i></span>
+						<input class='form-control session_login' name='pass' autocomplete='off' placeholder='Password' type='password'>
+					</div>
+        
+             </div>
+            <div class='modal-footer'>
+              <p><button class='btn btn-info' type='submit'><i class='fa fa-sign-in'></i> Sign in</button>
+          </div>
+        </div>
+    </div>
+	</form>
+</div>";

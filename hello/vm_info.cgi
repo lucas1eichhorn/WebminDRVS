@@ -39,7 +39,8 @@ print "</tr>";
 }
 	
 print &ui_table_end();
-&ui_table_hr();
+print "<div class='clear-fix'>&nbsp;</div>";
+
 ##Informacion de los procesos ejecuntadose en la VM
 	print &ui_table_start("Process", undef, 2);
 	print &ui_columns_start(["<b>VM</b>", "<b>p_nr</b>", "<b>endp</b>", "<b>lpid</b>", "<b>node</b>","<b>flag</b>", "<b>misc</b>", "<b>getf</b>", "<b>sndt</b>", "<b>wmig</b>", "<b>prxy</b>", "<b>name</b>"], undef, 0, ["align=center"]);
@@ -60,6 +61,31 @@ print "<td  align=center valign=top>$proc->{'sndt'}</td>";
 print "<td  align=center valign=top>$proc->{'wmig'}</td>";
 print "<td  align=center valign=top>$proc->{'proxy'}</td>";
 print "<td  align=center valign=top>$proc->{'name'}</td>";
+print "</tr>";
+
+}
+	
+print &ui_table_end();
+print "<div class='clear-fix'>&nbsp;</div>";
+
+
+##Stats
+	print &ui_table_start("Stats", undef, 2);
+	print &ui_columns_start(["<b>VM</b>", "<b>p_nr</b>", "<b>endp</b>", "<b>lpid</b>", "<b>node</b>","<b>lsnt</b>", "<b>rsnt/b>", "<b>lcopy</b>", "<b>rcopy</b>"], undef, 0, ["align=center"]);
+
+foreach $stat(&vm_stats_info($idVM)){
+
+#colocamos los campos de stat en su columna
+print "<tr>";
+print "<td  align=center valign=top>$stat->{'VMid'}</td>";
+print "<td  align=center valign=top>$stat->{'p_nr'}</td>";
+print "<td  align=center valign=top>$stat->{'endp'}</td>";
+print "<td  align=center valign=top>$stat->{'lpid'}</td>";
+print "<td  align=center valign=top>$stat->{'node'}</td>";
+print "<td  align=center valign=top>$stat->{'lsnt'}</td>";
+print "<td  align=center valign=top>$stat->{'rsnt'}</td>";
+print "<td  align=center valign=top>$stat->{'lcopy'}</td>";
+print "<td  align=center valign=top>$stat->{'rcopy'}</td>";
 print "</tr>";
 
 }

@@ -8,6 +8,9 @@ say here.
 BEGIN { push(@INC, ".."); };
 
 use WebminCore;
+use Net::OpenSSH;
+
+ 
 &init_config();
 
 # list_nodes()
@@ -193,6 +196,58 @@ close(PROC);
 return @rv;
 }
 
+
+# vm_stats_info
+# obtiene la informacion de stats en la VM pasada como parametro
+# leyendo el archivo /proc/drvs/VMx/stats
+sub vm_stats_info
+{
+ my  @args = @_;
+ my  $idVM=@args[0];
+local @rv;
+
+local $line="";
+
+&open_readfile(STAT, "/proc/drvs/VM$idVM/stats");
+local $i=0;
+while($line=<STAT>) {
+	##analizamos la linea, la primera linea posee los titulos
+	if ($i!=0&&$line =~ m/[0-9a-zA-Z]/){
+	#separamos cada columna por los espacios (REGEXP) y los guardamos en una array
+	local(@f)=split(/\s+/, $line);
+	local($VMid)=@f[1];
+	local($p_nr)=@f[2];
+	local($endp)=@f[3];
+	local($lpid)=@f[4];
+	local($node)=@f[5];
+	local($lsnt)=@f[6];
+	local($rsnt)=@f[7];
+	local($lcopy)=@f[8];
+	local($rcopy)=@f[9];
+
+	
+	#colocamos cada campo en un array hash
+		push(@rv, { 'VMid' => $VMid,
+					'p_nr'=>$p_nr,
+					'endp'=>$endp,
+					'lpid'=>$lpid,
+					'node'=>$node,
+					'lsnt'=>$lsnt,
+					'rsnt'=>$rsnt,			   
+					'lcopy'=> $lcopy,
+					'rcopy'=> $rcopy,
+					'line'=>$line
+				
+			     });
+		
+		
+	}
+	$i++;
+	}
+close(STAT);
+return @rv;
+}
+
 #get_running_VM
 #metodo que devuelve un arreglo con los ids de la maquina que se estan ejecutando en el nodo, a partir de un string como parametro
 #El string de parametro es del tipo -----X, donde X se encuentra en la posicion correspondiente al id de la VM
@@ -243,5 +298,21 @@ local $str_len=length($string);
 
   }
   return @id_list;
+}
+#comandos por ssh
+sub execute_ssh(){
+=pod
+my $host="192.168.0.15";
+my $user="root";
+my $password="root";
+my $ssh = Net::OpenSSH->new(host=>$host, user=>$user, port=>$port, password=>$password);
+=cut
+
+my $cmd = "cd /home/; ./execute_ssh.sh";
+my $Output = `$cmd`;
+
+local(@f)=split(/\s+/, $Output);
+
+return @f ;
 }
 1;
