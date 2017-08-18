@@ -1,17 +1,41 @@
-=head1 change-user-lib.pl
-
-This module has no actual functionality of it's own, so there isn't much to
-say here.
-
-=cut
-
 BEGIN { push(@INC, ".."); };
 
 use WebminCore;
-use Net::OpenSSH;
-
  
 &init_config();
+
+# list_hosts()
+# obtiene la informacion de los host cargados en /etc/hosts
+sub list_hosts
+{
+local @rv;
+
+local $line="";
+
+&open_readfile(HOSTS, "/etc/hosts");
+while($line=<HOSTS>) {
+	##analizamos la linea, si tiene una IP corresponde a un host
+	if (!($line =~ /\#/) && ($line=~ /[0-9a-zA-Z]/) ){
+	#separamos cada columna por los espacios (REGEXP) y los guardamos en una array
+		local(@f)=split(/\s+/, $line);
+	local($ip)=@f[0];
+	local($hostname)=@f[1];
+
+	
+	#colocamos cada campo en un array hash
+		push(@rv, { 'ip' => $ip,
+					'hostname'=>$hostname,
+					'line'=> $line
+				
+			     });
+		}
+	}
+	
+close(HOSTS);
+return @rv;
+}
+
+
 
 # list_nodes()
 # obtiene la informacion de los nodos activos de /proc/drvs/nodes

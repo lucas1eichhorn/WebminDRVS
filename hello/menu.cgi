@@ -1,9 +1,11 @@
 #!/usr/bin/perl
 # index.cgi
 # Muestra el menu de la pantalla inicial con iconos
-
+use CGI;
+my $req = CGI->new;
+  $host_req = $req->param('host');
 require './hello-lib.pl';
-&ui_print_header(undef, 'DRVS Administration', '', undef, 1, 1, 0,
+&ui_print_header(undef, "DRVS Administration - $host_req", '', undef, 1, 1, 0,
 	&help_search_link('ifconfig hosts resolve.conf nsswitch.conf', 'man'));
 
 	print "<div class='row icons-row vertical-align' style='padding-left:170px;'>";
@@ -11,7 +13,7 @@ require './hello-lib.pl';
 ##DRVS
 print "<div class='col-xs-1 icons-container forged-xx-skip grayscaled animated' style='min-height:150px; min-width:150px;'> ";
 print "<a href='drvs_info.cgi' class='icon_link' style='text-decoration: none;'>";
-print "<img class='ui_icon ui_icon_protected' src='images/drvs.gif' alt='' style='min-height:100px; min-width:100px;'><br>DRVS</a>";
+print "<img class='ui_icon ui_icon_protected' src='images/drvs.gif' alt='' style='min-height:100px; min-width:100px;'><br>DRVS at $host_req</a>";
 print "</div>";
 
 
