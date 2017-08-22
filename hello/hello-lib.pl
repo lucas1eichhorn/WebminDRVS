@@ -45,8 +45,10 @@ local @rv;
 
 local $line="";
 
-&open_readfile(NODES, "/proc/drvs/nodes");
-while($line=<NODES>) {
+#&open_readfile(NODES, "/proc/drvs/nodes");
+my $file=&execute_ssh_command("cat /proc/drvs/nodes");
+local @lines=split(/\n/,$file);
+foreach $line(@lines){
 	##analizamos la linea, si tiene---X corresponde a un nodo, sino es el titulo del archivo
 	if ($line =~ m/-X/){
 	#separamos cada columna por los espacios (REGEXP) y los guardamos en una array
@@ -73,7 +75,7 @@ while($line=<NODES>) {
 		}
 	}
 	
-close(NODES);
+
 return @rv;
 }
 
@@ -88,8 +90,10 @@ local @rv;
 
 local $line="";
 
-&open_readfile(VM, "/proc/drvs/VM$idVM/info");
-while($line=<VM>) {
+#&open_readfile(VM, "/proc/drvs/VM$idVM/info");
+my $file=&execute_ssh_command("cat /proc/drvs/VM$idVM/info");
+local @lines=split(/\n/,$file);
+foreach $line(@lines){
 	##analizamos la linea, si tiene = es un campo de informacion de la MV
 	if ($line =~ m/=/){
 	
@@ -123,7 +127,7 @@ while($line=<VM>) {
 	}	
 	}
 	
-close(VM);
+
 return @rv;
 }
 
@@ -135,10 +139,12 @@ sub node_info
  my  $idnode=@args[0];
 local @rv;
 
-local $line="";
+my $file=&execute_ssh_command("cat /proc/drvs/info");
+#&open_readfile(NODE, "/proc/drvs/info");
 
-&open_readfile(NODE, "/proc/drvs/info");
-while($line=<NODE>) {
+
+local @lines=split(/\n/,$file);
+foreach $line(@lines){
 	##analizamos la linea, si tiene = es un campo de informacion del nodo
 	if ($line =~ m/=/){
 	
@@ -159,8 +165,9 @@ while($line=<NODE>) {
 	}	
 	}
 	
-close(NODE);
+
 return @rv;
+
 }
 
 
@@ -175,9 +182,11 @@ local @rv;
 
 local $line="";
 
-&open_readfile(PROC, "/proc/drvs/VM$idVM/procs");
+#&open_readfile(PROC, "/proc/drvs/VM$idVM/procs");
+my $file=&execute_ssh_command("cat /proc/drvs/VM$idVM/procs");
 local $i=0;
-while($line=<PROC>) {
+local @lines=split(/\n/,$file);
+foreach $line(@lines){
 	##analizamos la linea, la primera linea posee los titulos
 	if ($i!=0&&$line =~ m/[0-9a-zA-Z]/){
 	#separamos cada columna por los espacios (REGEXP) y los guardamos en una array
@@ -232,9 +241,13 @@ local @rv;
 
 local $line="";
 
-&open_readfile(STAT, "/proc/drvs/VM$idVM/stats");
+#&open_readfile(STAT, "/proc/drvs/VM$idVM/stats");
+my $file=&execute_ssh_command("cat /proc/drvs/VM$idVM/stats");
+
 local $i=0;
-while($line=<STAT>) {
+
+local @lines=split(/\n/,$file);
+foreach $line(@lines){
 	##analizamos la linea, la primera linea posee los titulos
 	if ($i!=0&&$line =~ m/[0-9a-zA-Z]/){
 	#separamos cada columna por los espacios (REGEXP) y los guardamos en una array
@@ -268,7 +281,7 @@ while($line=<STAT>) {
 	}
 	$i++;
 	}
-close(STAT);
+
 return @rv;
 }
 
@@ -323,20 +336,61 @@ local $str_len=length($string);
   }
   return @id_list;
 }
-#comandos por ssh
-sub execute_ssh(){
-=pod
-my $host="192.168.0.15";
-my $user="root";
-my $password="root";
-my $ssh = Net::OpenSSH->new(host=>$host, user=>$user, port=>$port, password=>$password);
-=cut
+#metodo que permite conectarse a uno nodo mediante ssh
+sub connect_node_ssh(){
 
-my $cmd = "cd /home/; ./execute_ssh.sh";
+my @args=@_;
+
+local $node=@args[0];
+local $usr=@args[1];
+local $pass=@args[2];
+
+#guardamos los datos de login en un archivo las futuras conexiones
+&store_login_data($node,$usr,$pass);
+
+local $command="cat /proc/drvs/info";
+
+my $cmd = "cd /usr/local/webmin/hello; ./execute_ssh.sh $node $usr $pass \"$command\"";
 my $Output = `$cmd`;
 
-local(@f)=split(/\s+/, $Output);
+return $Output ;
+}
 
-return @f ;
+#metodo que permite ejecutar un comando en un nodo remoto mediante ssh
+#se leen las credenciales del archivo login.dat
+sub execute_ssh_command(){
+
+my @args=@_;
+#leemos las credenciales de login del archivo
+local $command=@args[0];
+open my $handle, '<', 'login.dat';
+chomp(my @connection_data = <$handle>);
+close $handle;
+
+#ejecutamos el comando mediante sshpass en el nodo remoto, con las credenciales obtenidas del archivo
+local $cmd = "cd /usr/local/webmin/hello; ./execute_ssh.sh \"@connection_data[0]\" \"@connection_data[1]\" \"@connection_data[2]\" \"$command\"";
+local $Output = `$cmd`;
+
+return $Output ;
+
+}
+
+
+
+
+#metodo que alamacena las credenciales de registro en un archivo
+sub store_login_data(){
+my @args=@_;
+
+local $node=@args[0];
+local $usr=@args[1];
+local $pass=@args[2];
+
+my $filename = 'login.dat';
+open(my $fh, '>', $filename) or die "Could not open file '$filename' $!";
+print $fh "$node\n";
+print $fh "$usr\n";
+print $fh "$pass\n";
+close $fh;
 }
 1;

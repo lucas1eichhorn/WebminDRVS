@@ -13,7 +13,7 @@ print &ui_form_start("menu.cgi","post");
         <div class='modal-content'>
             <div class='modal-header'>
              
-                <h4 class='text-center'>Host login</h4>
+                <h4 class='text-center'>Host Login:</h4>
             </div>
             <div class='modal-body'>
 					
@@ -39,3 +39,4 @@ print &ui_form_start("menu.cgi","post");
     </div>
 	</form>
 </div>";
+

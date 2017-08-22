@@ -17,10 +17,10 @@ print &ui_columns_start(["Hostname","IP"], undef, 2, ["align=center", "align=cen
 #Listamos los host
 foreach $host(&list_hosts()){
 
-print "<tr>";
-print "<td  align=left valign=top><b><a href='login.cgi?hostname=$host->{'hostname'}' title='Connect to $host->{'hostname'} '><b>$host->{'hostname'}</b></a></td>";
-print "<td  align=left valign=top><b>$host->{'ip'}<b></td>";
-print "</tr>";
+	print "<tr>";
+	print "<td  align=left valign=top><b><a href='login.cgi?hostname=$host->{'hostname'}' title='Connect to $host->{'hostname'} '><b>$host->{'hostname'}</b></a></td>";
+	print "<td  align=left valign=top><b>$host->{'ip'}<b></td>";
+	print "</tr>";
 }
 
 print &ui_table_end();
