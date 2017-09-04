@@ -5,7 +5,7 @@
 require './hello-lib.pl';
 use CGI;
 $request = new CGI;
-my $idVM = $request->param('idVM');
+my $vm_name = $request->param('vm_name');
 
 #header
 &ui_print_header(undef, "VM Information", "", "intro", 1, 1, 0,
@@ -16,8 +16,8 @@ my $idVM = $request->param('idVM');
 		
 #print &ui_form_start("create_route.cgi", "post");
 ##Informacion de la Maquina Virtual
-	print &ui_table_start("VM$idVM", undef, 2);
-foreach $VM(&vm_info($idVM)){
+	print &ui_table_start("$vm_name", undef, 2);
+foreach $VM(&vm_info($vm_name)){
 
 #print &ui_table_row("$node->{name}", "$node->{value}",undef,\@tds  );
 
@@ -45,7 +45,7 @@ print "<div class='clear-fix'>&nbsp;</div>";
 	print &ui_table_start("Process", undef, 2);
 	print &ui_columns_start(["<b>VM</b>", "<b>p_nr</b>", "<b>endp</b>", "<b>lpid</b>", "<b>node</b>","<b>flag</b>", "<b>misc</b>", "<b>getf</b>", "<b>sndt</b>", "<b>wmig</b>", "<b>prxy</b>", "<b>name</b>"], undef, 0, ["align=center"]);
 
-foreach $proc(&vm_procs_info($idVM)){
+foreach $proc(&vm_procs_info($vm_name)){
 
 #colocamos los campos de cada proceso en su columna
 print "<tr>";

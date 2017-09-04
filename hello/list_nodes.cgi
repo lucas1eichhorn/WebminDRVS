@@ -51,4 +51,4 @@ print "</tr>";
 #print &ui_form_end([ [ undef, 'Add node' ] ]);
 print &ui_table_end();
 
-&ui_print_footer("", "Main");
+&ui_print_footer("menu.cgi", "menu");
