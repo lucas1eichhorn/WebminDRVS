@@ -11,6 +11,8 @@ require './hello-lib.pl';
 print &ui_table_start("Proxies list", "align=center");	
 print &ui_columns_start(["Proxy","Proxies_Name", "Flags","Sender","Receiver", "Running on nodes"], undef, 0, ["align=center"]);
 #Listamos los nodos
+
+
 foreach $proxy(&list_proxies()){
 
 	print "<tr>";

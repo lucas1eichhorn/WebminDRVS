@@ -86,13 +86,13 @@ sub list_proxies
 {
 local @rv;
 my $file=&execute_ssh_command("cat /proc/drvs/proxies/info");
-
 local @lines=split(/\n/,$file);
+
 local $i=0;
 foreach $line(@lines){
 		#la primer linea contiene los titulos
-		if ($i>0){
 		
+		if($i>0){
 			local(@f) = split(/\s+/,$line);
 			local($prox) =@f[1];
 			local($flags) = @f[2];
@@ -115,10 +115,10 @@ foreach $line(@lines){
 			});
 
 		}
-		$i++;
 	}
 	
 	return @rv;
+
 }
 
 #prox_procs_info
@@ -458,7 +458,7 @@ local $param_node="@args[0]";
 local $param_usr="@args[1]";
 local $param_pass="@args[2]";
 #verificamos si vienen los datos para conectarse al nodo  en los argumentos
-	if($param_node=="" && $param_usr=="" && $param_pass==""){
+	if(length $param_node ==0 && length $param_usr ==0 && length $param_pass ==0){
 	
 	#sino los obtenemos de session
 	 my $cgi = CGI->new;
@@ -467,14 +467,14 @@ local $param_pass="@args[2]";
 	 $node = $session->param("node");
 	 $usr = $session->param("usr");
 	 $pass=$session->param("pass");
-
+	
 	}else{##si viene desde el login, utilizamos los argumentos para conectarnos
 	 $node = $param_node;
 	 $usr = $param_usr;
 	 $pass = $param_pass;
 	
 	#guardamos los datos de login en un archivo las futuras conexiones
-	&store_login_data($node,$usr,$pass);
+	&store_login_data($param_node,$param_usr,$param_pass);
 	}
 
 
@@ -483,7 +483,7 @@ local $command="hostname";
 
 my $cmd = "cd /usr/local/webmin/hello; ./execute_ssh.sh \"$node\" \"$usr\" \"$pass\" \"$command\"";
 my $Output = `$cmd`;
-
+#my $Output ="$param_node $param_usr $param_pass" ;
 return $Output ;
 }
 
@@ -543,7 +543,8 @@ $session->param("pass", "$pass");
  $sid = $session->id();
  #guaramos el id de session creada en una cookie
   my $cgi = CGI->new;
- $cookie = $cgi->cookie(CGISESSID => $sid);
+ $cookie = $cgi->cookie("CGISESSID" => $sid);
+print $cgi->header(-cookie=>$cookie);
  return $sid;
 }
 1;

@@ -73,7 +73,7 @@ print "<div class='clear-fix'>&nbsp;</div>";
 	print &ui_table_start("Stats", undef, 2);
 	print &ui_columns_start(["<b>VM</b>", "<b>p_nr</b>", "<b>endp</b>", "<b>lpid</b>", "<b>node</b>","<b>lsnt</b>", "<b>rsnt/b>", "<b>lcopy</b>", "<b>rcopy</b>"], undef, 0, ["align=center"]);
 
-foreach $stat(&vm_stats_info($idVM)){
+foreach $stat(&vm_stats_info($vm_name)){
 
 #colocamos los campos de stat en su columna
 print "<tr>";
@@ -97,4 +97,4 @@ print &ui_table_end();
 #print ui_form_start('save.cgi');
 
 
-&ui_print_footer("", "DRVS Administration");
+&ui_print_footer("menu.cgi", "menu");
