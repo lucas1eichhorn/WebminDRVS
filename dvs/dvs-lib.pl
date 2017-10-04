@@ -168,18 +168,18 @@ foreach $line(@lines){
 
 	return @rv;
 }
-# vm_info()
-# obtiene la informacion de una maquina virtual pasada como parametro - lee el archivo /proc/drvs/VMo/info
-sub vm_info
+# dc_info()
+# obtiene la informacion de una maquina virtual pasada como parametro - lee el archivo /proc/drvs/{dc_name}/info
+sub dc_info
 {
  my  @args = @_;
- my  $vm_name=@args[0];
+ my  $dc_name=@args[0];
 local @rv;
 
 local $line="";
 
-#&open_readfile(VM, "/proc/drvs/VM$idVM/info");
-my $file=&execute_ssh_command("cat /proc/drvs/$vm_name/info");
+
+my $file=&execute_ssh_command("cat /proc/drvs/$dc_name/info");
 local @lines=split(/\n/,$file);
 foreach $line(@lines){
 	##analizamos la linea, si tiene = es un campo de informacion de la MV
@@ -259,27 +259,27 @@ return @rv;
 }
 
 
-# vm_procs_info
-# obtiene la informacion de los procesos activos en la VM pasada como parametro
-# leyendo el archivo /proc/drvs/VMx/procs
-sub vm_procs_info
+# dc_procs_info
+# obtiene la informacion de los procesos activos en el DC pasada como parametro
+# leyendo el archivo /proc/drvs/{dc_nombre}/procs
+sub dc_procs_info
 {
  my  @args = @_;
- my  $vm_name=@args[0];
+ my  $dc_name=@args[0];
 local @rv;
 
 local $line="";
 
-#&open_readfile(PROC, "/proc/drvs/VM$idVM/procs");
-my $file=&execute_ssh_command("cat /proc/drvs/$vm_name/procs");
+
+my $file=&execute_ssh_command("cat /proc/drvs/$dc_name/procs");
 local $i=0;
 local @lines=split(/\n/,$file);
 foreach $line(@lines){
 	##analizamos la linea, la primera linea posee los titulos
-	if ($i!=0&&$line =~ m/[0-9a-zA-Z]/){
+	if ($i>1&&$line =~ m/[0-9a-zA-Z]/){
 	#separamos cada columna por los espacios (REGEXP) y los guardamos en una array
 	local(@f)=split(/\s+/, $line);
-	local($VMid)=@f[1];
+	local($DCid)=@f[1];
 	local($p_nr)=@f[2];
 	local($endp)=@f[3];
 	local($lpid)=@f[4];
@@ -293,7 +293,7 @@ foreach $line(@lines){
 	local($name)=@f[12];
 	
 	#colocamos cada campo en un array hash
-		push(@rv, { 'VMid' => $VMid,
+		push(@rv, { 'DCid' => $DCid,
 					'p_nr'=>$p_nr,
 					'endp'=>$endp,
 					'lpid'=>$lpid,
@@ -313,13 +313,13 @@ foreach $line(@lines){
 	}
 	$i++;
 	}
-close(PROC);
+
 return @rv;
 }
 
-#vm_running_list
+#dc_running_list
 #metodo que lista el nombre las carpetas de las MV en /proc/drvs/
-sub vm_running_list()
+sub dc_running_list()
 {
 local @rv;
 local $line="";
@@ -334,7 +334,7 @@ foreach $line(@lines){
 	if ($i!=0 && !($line =~ m/proxies/)){
 
 	#colocamos cada campo en un array hash
-		push(@rv, { 'vm_name' => $line});
+		push(@rv, { 'dc_name' => $line});
 		
 		
 	}
@@ -343,29 +343,29 @@ foreach $line(@lines){
 
 return @rv;
 }
-# vm_stats_info
-# obtiene la informacion de stats en la VM pasada como parametro
-# leyendo el archivo /proc/drvs/VMx/stats
-sub vm_stats_info
+# dc_stats_info
+# obtiene la informacion de stats en el DC pasada como parametro
+# leyendo el archivo /proc/drvs/{dc_name}/stats
+sub dc_stats_info
 {
  my  @args = @_;
- my  $vm_folder=@args[0];
+ my  $dc_folder=@args[0];
 local @rv;
 
 local $line="";
 
-#&open_readfile(STAT, "/proc/drvs/VM$idVM/stats");
-my $file=&execute_ssh_command("cat /proc/drvs/$vm_folder/stats");
+
+my $file=&execute_ssh_command("cat /proc/drvs/$dc_folder/stats");
 
 local $i=0;
 
 local @lines=split(/\n/,$file);
 foreach $line(@lines){
 	##analizamos la linea, la primera linea posee los titulos
-	if ($i!=0&&$line =~ m/[0-9a-zA-Z]/){
+	if ($i>1&&$line =~ m/[0-9a-zA-Z]/){
 	#separamos cada columna por los espacios (REGEXP) y los guardamos en una array
 	local(@f)=split(/\s+/, $line);
-	local($VMid)=@f[1];
+	local($DCid)=@f[1];
 	local($p_nr)=@f[2];
 	local($endp)=@f[3];
 	local($lpid)=@f[4];
@@ -377,7 +377,7 @@ foreach $line(@lines){
 
 	
 	#colocamos cada campo en un array hash
-		push(@rv, { 'VMid' => $VMid,
+		push(@rv, { 'DCid' => $DCid,
 					'p_nr'=>$p_nr,
 					'endp'=>$endp,
 					'lpid'=>$lpid,
@@ -398,10 +398,10 @@ foreach $line(@lines){
 return @rv;
 }
 
-#get_running_VM
+#get_running_DC
 #metodo que devuelve un arreglo con los ids de la maquina que se estan ejecutando en el nodo, a partir de un string como parametro
-#El string de parametro es del tipo -----X, donde X se encuentra en la posicion correspondiente al id de la VM
-sub get_running_VM(){
+#El string de parametro es del tipo -----X, donde X se encuentra en la posicion correspondiente al id del DC
+sub get_running_DC(){
 local @id_list;
 my @args=@_;
 
@@ -415,7 +415,7 @@ local $str_len=length($string);
 
     #colocamos cada campo en un array hash
 	
-		push(@id_list, { 'VMid' => $str_len-$result-1});
+		push(@id_list, { 'DCid' => $str_len-$result-1});
 
     $offset = $result + 1;
     $result = index($string, $char, $offset);
@@ -424,7 +424,7 @@ local $str_len=length($string);
   return @id_list;
 }
 #get_running_NODES
-#metodo que devuelve un arreglo con los id del nodo que se estan ejecutando la VM, a partir de un string como parametro
+#metodo que devuelve un arreglo con los id del nodo que se estan ejecutando el DC, a partir de un string como parametro
 #El string de parametro es del tipo -----X, donde X se encuentra en la posicion correspondiente al id del nodo
 sub get_running_NODE(){
 local @id_list;
@@ -463,7 +463,7 @@ local $param_pass="@args[2]";
 	#sino los obtenemos de session
 	 my $cgi = CGI->new;
 	$sid = $cgi->cookie("CGISESSID") || undef;
-	$session=new CGI::Session(undef, $sid, {Directory=>'/usr/local/webmin/hello/tmp'});
+	$session=new CGI::Session(undef, $sid, {Directory=>'/usr/local/webmin/dvs/tmp'});
 	 $node = $session->param("node");
 	 $usr = $session->param("usr");
 	 $pass=$session->param("pass");
@@ -481,7 +481,7 @@ local $param_pass="@args[2]";
 
 local $command="hostname";
 
-my $cmd = "cd /usr/local/webmin/hello; ./execute_ssh.sh \"$node\" \"$usr\" \"$pass\" \"$command\"";
+my $cmd ="cd /usr/local/webmin/dvs; ./execute_ssh.sh \"$node\" \"$usr\" \"$pass\" \"$command\"";
 my $Output = `$cmd`;
 #my $Output ="$param_node $param_usr $param_pass" ;
 return $Output ;
@@ -491,7 +491,7 @@ return $Output ;
 sub connected_node_name(){
  my $cgi = CGI->new;
 $sid = $cgi->cookie("CGISESSID");
-$session=new CGI::Session(undef, $sid, {Directory=>'/usr/local/webmin/hello/tmp'});
+$session=new CGI::Session(undef, $sid, {Directory=>'/usr/local/webmin/dvs/tmp'});
 $node = $session->param("node");
 return "$node";
 }
@@ -502,7 +502,7 @@ sub execute_ssh_command(){
 
 #leemos las credenciales de login de session;
 $sid = $cgi->cookie("CGISESSID");
-$session=new CGI::Session(undef, $sid, {Directory=>'/usr/local/webmin/hello/tmp'});
+$session=new CGI::Session(undef, $sid, {Directory=>'/usr/local/webmin/dvs/tmp'});
 $node = $session->param("node");
 $usr = $session->param("usr");
 $pass = $session->param("pass");
@@ -512,7 +512,7 @@ my @args=@_;
 
 local $command=@args[0];
 #ejecutamos el comando mediante sshpass en el nodo remoto, con las credenciales obtenidas del archivo
-local $cmd = "cd /usr/local/webmin/hello; ./execute_ssh.sh \"$node\" \"$usr\" \"$pass\" \"$command\"";
+local $cmd = "cd /usr/local/webmin/dvs; ./execute_ssh.sh \"$node\" \"$usr\" \"$pass\" \"$command\"";
 local $Output = `$cmd`;
 
 return  $Output;
@@ -533,7 +533,7 @@ local $usr=@args[1];
 local $pass=@args[2];
 
 #session parametros: 1-tipo de almacenamiento(default:File) 2-session id (undef crea una nueva) 3: dir de almacenamiento
-local $session = new CGI::Session(undef, undef, {Directory=>'/usr/local/webmin/hello/tmp'});
+local $session = new CGI::Session(undef, undef, {Directory=>'/usr/local/webmin/dvs/tmp'});
 
 #almacenamos en cookies de session
 $session->param("node", "$node");

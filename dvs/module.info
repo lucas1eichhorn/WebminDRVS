@@ -1,0 +1,4 @@
+desc=DVS Administration
+desc_en=DVS Administration
+os_support=*-linux
+category=system

@@ -1,15 +1,15 @@
 #!/usr/bin/perl
-# drvs_info.cgi
-# Muestra la informacion del drvs en el nodo actual
+# dvs_info.cgi
+# Muestra la informacion del dvs en el nodo actual
 # Se lee la informacion del archiv /proc/drvs/info
 
-require './hello-lib.pl';
+require './dvs-lib.pl';
 use CGI;
 $request = new CGI;
 my $idnode = $request->param('idnode');
 
 #header
-&ui_print_header(undef, "DRVS Information", "", "intro", 1, 1, 0,
+&ui_print_header(undef, "DVS Information", "", "intro", 1, 1, 0,
 	&help_search_link(defined(&package_help) ? ( &package_help() ) : ( ),
 			  "man", "doc"));
 		local (@hcols, @tds);

@@ -2,35 +2,17 @@
 # list_dns.cgi
 # Example
 
-require './hello-lib.pl';
+require './dvs-lib.pl';
 
 
 &ui_print_header(undef, "Nodes Information", "", "intro", 1, 1, 0,
 	&help_search_link(defined(&package_help) ? ( &package_help() ) : ( ),
 			  "man", "doc"));
-my $filename = "/proc/drvs/nodes";
-open(my $fh, '<:encoding(UTF-8)', $filename)
-  or die "Could not open file '$filename' $!";
-  
-=pod
-while (my $row = <$fh>) {
-  chomp $row;
- print "$row<br>";
-}
-=cut
 
 
-#print ui_form_start('save.cgi');
-
-#print &ui_table_start("Nodes", ["align=center"], 7);
-#print &ui_table_row("Titulo 1",	"ASDa");
-#	print &ui_table_row("Titulo 2",	"ASDa",4);
-#	print &ui_table_row("Titulo 3",	"ASDa",4);
-#	print &ui_table_row("Titulo 4",	"ASDa",4);
-	#print &ui_table_row("Hola",
  @tds = ( "height=22");
 print &ui_table_start("Nodes list", "align=center");	
-print &ui_columns_start(["ID","Name","Flags","Proxies","PX msg Sent","PX msg Received","Runnign MV"], undef, 0, ["align=center"]);
+print &ui_columns_start(["ID","Name","Flags","Proxies","PX msg Sent","PX msg Received","Runnign DC"], undef, 0, ["align=center"]);
 #Listamos los nodos
 foreach $node(&list_nodes()){
 
@@ -42,8 +24,8 @@ print "<td  align=center valign=top><b>$node->{'proxies'}<b></td>";
 print "<td  align=center valign=top><b>$node->{'pxsent'}<b></td>";
 print "<td  align=center valign=top><b>$node->{'pxrcvd'}<b></td>";
 print "<td  align=center valign=top>";
-foreach $vm(&get_running_VM($node->{'host'})){
-print "<a href='vm_info.cgi?idVM=$vm->{'VMid'}' title='View VM$vm->{'VMid'} information'><b><$vm->{'VMid'}></b> &nbsp; &nbsp;</a>";
+foreach $dc(&get_running_DC($node->{'host'})){
+print "<a href='dc_info.cgi?idDC=$dc->{'DCid'}' title='View DC$dc->{'DCid'} information'><b><$dc->{'DCid'}></b> &nbsp; &nbsp;</a>";
 }
 print "</td>";
 print "</tr>";

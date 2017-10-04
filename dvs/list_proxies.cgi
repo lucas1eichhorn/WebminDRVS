@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-require './hello-lib.pl';
+require './dvs-lib.pl';
 
 
 &ui_print_header(undef, "Proxies Information", "", "intro", 1, 1, 0,

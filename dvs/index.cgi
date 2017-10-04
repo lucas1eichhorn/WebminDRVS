@@ -3,10 +3,10 @@
 # Modulo que presenta el listado de nodos cargados como pantalla de inicio
 # Se lee la informacion contenida en el archivo /etc/hosts
 
-require './hello-lib.pl';
+require './dvs-lib.pl';
 
 
-&ui_print_header(undef, "DRVS Administration", "", "intro", 1, 1, 0,
+&ui_print_header(undef, "DVS Administration", "", "intro", 1, 1, 0,
 	&help_search_link(defined(&package_help) ? ( &package_help() ) : ( ),
 			  "man", "doc"));
 

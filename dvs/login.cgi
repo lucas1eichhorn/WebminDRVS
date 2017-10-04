@@ -3,8 +3,8 @@
 # Muestra el menu de la pantalla inicial con  el login
 use CGI;
 my $req = CGI->new;
-require './hello-lib.pl';
-&ui_print_header(undef, 'DRVS Administration');
+require './dvs-lib.pl';
+&ui_print_header(undef, 'DVS Administration');
 
   $hostname_req = $req->param('hostname');
 print "'<div id='createFolderDialog' class='modal show'>";
