@@ -1,0 +1,19 @@
+-copiar la carpeta dvs del modulo en /usr/local/webmin/
+-borrar archivos cache de modulos de webmin:
+/etc/webmin/intalled.cache
+ /etc/webmin/module.infos.cache
+-reiniciar servicio webmin: 
+service webmin restart
+-En Webmin clickear 'Refesh Modules' en el menu lateral izquierdo al final
+
+Mas informacion en: https://doxfer.webmin.com/Webmin/Module_Development
+_____________________________________________________________________________________________
+
+-el funcionamiento del modulo requiere tener instalada la libreria de CGI::session en linux
+ejecutar los comandos en linux:
+perl -MCPAN -e shell
+install CGI::Session
+
+-el funcionamioento del modulo requiere tener instalado SSHPASS en linux:
+sudo apt-get install sshpass
+
