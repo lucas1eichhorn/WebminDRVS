@@ -7,7 +7,7 @@ service webmin restart
 -En Webmin clickear 'Refesh Modules' en el menu lateral izquierdo al final
 
 Mas informacion en: https://doxfer.webmin.com/Webmin/Module_Development
-_____________________________________________________________________________________________
+______________________________________________________________________________________________
 
 -el funcionamiento del modulo requiere tener instalada la libreria de CGI::session en linux
 ejecutar los comandos en linux:
