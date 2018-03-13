@@ -17,3 +17,10 @@ install CGI::Session
 -el funcionamioento del modulo requiere tener instalado SSHPASS en linux:
 sudo apt-get install sshpass
 
+
+___________________________________________________________________________________________
+iniciar sesion en webmin, corre en el puerto 10000 del node0 como servidor
+192.168.0.20(ip server):10000
+usuario:admin
+pass:admin
+
